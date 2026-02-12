@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+
+{% block title %}Add Machine - B2B Manufacturing Platform{% endblock %}
+
+{% block content %}
+<style>
+    .form-section {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        margin-bottom: 30px;
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .form-header h1 {
+        color: #2c3e50;
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .form-header p {
+        color: #7f8c8d;
+        font-size: 16px;
+    }
+
+    .subsection {
+        margin-bottom: 40px;
+        padding: 30px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+    }
+
+    .subsection h2 {
+        color: #2c3e50;
+        font-size: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .subsection h2::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: #667eea;
+        border-radius: 50%;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #2c3e50;
+        font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e1e8ed;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .image-upload-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .image-input-group {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        border: 2px dashed #e1e8ed;
+        transition: border-color 0.3s;
+    }
+
+    .image-input-group:hover {
+        border-color: #667eea;
+    }
+
+    .image-input-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #2c3e50;
+        font-weight: 500;
+    }
+
+    .image-input-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #e1e8ed;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .image-input-group .help-text {
+        font-size: 12px;
+        color: #7f8c8d;
+        margin-top: 5px;
+    }
+
+    .required-field {
+        color: #e74c3c;
+    }
+
+    .info-box {
+        background: #e8f4fd;
+        border: 1px solid #bee5eb;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 20px;
+        color: #0c5460;
+    }
+
+    @media (max-width: 768px) {
+        .form-section {
+            padding: 20px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .image-upload-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="form-section">
+    <div class="form-header">
+        <h1>Add New Machine</h1>
+        <p>List your industrial machine for MSME buyers</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('add_machine') }}" class="machine-form">
+        <!-- Basic Information Section -->
+        <div class="subsection">
+            <h2>Basic Information</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="name">Machine Name <span class="required-field">*</span></label>
+                    <input type="text" id="name" name="name" required 
+                           placeholder="e.g., CNC Milling Machine DMG MORI">
+                </div>
+                <div class="form-group">
+                    <label for="category">Category <span class="required-field">*</span></label>
+                    <select id="category" name="category" required>
+                        <option value="">Select Category</option>
+                        <option value="CNC Machines">CNC Machines</option>
+                        <option value="Lathe Machines">Lathe Machines</option>
+                        <option value="Press Machines">Press Machines</option>
+                        <option value="Welding Machines">Welding Machines</option>
+                        <option value="Cutting Machines">Cutting Machines</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="use_case">Primary Use Case <span class="required-field">*</span></label>
+                    <input type="text" id="use_case" name="use_case" required 
+                           placeholder="e.g., Precision Metal Cutting and Drilling">
+                </div>
+                <div class="form-group">
+                    <label for="price_range">Price Range <span class="required-field">*</span></label>
+                    <input type="text" id="price_range" name="price_range" required 
+                           placeholder="e.g., ₹15,00,000 - ₹25,00,000">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="description">Detailed Description <span class="required-field">*</span></label>
+                <textarea id="description" name="description" required 
+                          placeholder="Provide comprehensive details about your machine, including features, capabilities, condition, and any additional information that would help potential buyers..."></textarea>
+            </div>
+        </div>
+
+        <!-- Technical Specifications Section -->
+        <div class="subsection">
+            <h2>Technical Specifications</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="production_capacity">Production Capacity</label>
+                    <input type="text" id="production_capacity" name="production_capacity" 
+                           placeholder="e.g., 500-1000 units per 8-hour shift">
+                </div>
+                <div class="form-group">
+                    <label for="automation_level">Automation Level</label>
+                    <select id="automation_level" name="automation_level">
+                        <option value="">Select Automation Level</option>
+                        <option value="Manual">Manual</option>
+                        <option value="Semi-Automatic">Semi-Automatic</option>
+                        <option value="Fully Automatic">Fully Automatic</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="power_requirement">Power Requirement</label>
+                    <input type="text" id="power_requirement" name="power_requirement" 
+                           placeholder="e.g., 440V, 3 Phase, 15 kW">
+                </div>
+                <div class="form-group">
+                    <label for="machine_dimensions">Machine Dimensions</label>
+                    <input type="text" id="machine_dimensions" name="machine_dimensions" 
+                           placeholder="e.g., 12ft × 8ft × 6ft (L×W×H)">
+                </div>
+                <div class="form-group">
+                    <label for="raw_material">Raw Material Supported</label>
+                    <input type="text" id="raw_material" name="raw_material" 
+                           placeholder="e.g., Mild Steel, Stainless Steel, Aluminum">
+                </div>
+                <div class="form-group">
+                    <label for="operator_skill">Operator Skill Level</label>
+                    <select id="operator_skill" name="operator_skill">
+                        <option value="">Select Skill Level</option>
+                        <option value="Basic operator">Basic Operator</option>
+                        <option value="Semi-skilled technician required">Semi-skilled Technician Required</option>
+                        <option value="Skilled operator required">Skilled Operator Required</option>
+                        <option value="Expert operator required">Expert Operator Required</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="warranty_info">Warranty Information</label>
+                    <input type="text" id="warranty_info" name="warranty_info" 
+                           placeholder="e.g., 1 year manufacturer warranty + service support">
+                </div>
+            </div>
+        </div>
+
+        <!-- Business Fit Section -->
+        <div class="subsection">
+            <h2>Industry Fit</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="ideal_industry">Ideal Industries</label>
+                    <input type="text" id="ideal_industry" name="ideal_industry" 
+                           placeholder="e.g., Automotive, Aerospace, General Engineering">
+                </div>
+                <div class="form-group">
+                    <label for="business_size_fit">Business Size Fit</label>
+                    <select id="business_size_fit" name="business_size_fit">
+                        <option value="">Select Business Size</option>
+                        <option value="Small MSME (10-50 employees)">Small MSME (10-50 employees)</option>
+                        <option value="Medium Unit (50-200 employees)">Medium Unit (50-200 employees)</option>
+                        <option value="Large Enterprise (200+ employees)">Large Enterprise (200+ employees)</option>
+                        <option value="All Sizes">All Sizes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="installation_support">Installation Support</label>
+                    <select id="installation_support" name="installation_support">
+                        <option value="">Select Support Option</option>
+                        <option value="yes">Yes - We provide installation support</option>
+                        <option value="no">No - Buyer arranges installation</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Machine Images Section -->
+        <div class="subsection">
+            <h2>Machine Images</h2>
+            <div class="info-box">
+                <strong>📸 Important:</strong> Add real machine photos from different angles to increase buyer trust and improve your chances of selling. At least one image is required.
+            </div>
+            
+            <div class="image-upload-grid">
+                <div class="image-input-group">
+                    <label for="image_front">Front View <span class="required-field">*</span></label>
+                    <input type="url" id="image_front" name="image_front" 
+                           placeholder="https://example.com/front-view.jpg">
+                    <div class="help-text">Main front view of the machine</div>
+                </div>
+                
+                <div class="image-input-group">
+                    <label for="image_side">Side View</label>
+                    <input type="url" id="image_side" name="image_side" 
+                           placeholder="https://example.com/side-view.jpg">
+                    <div class="help-text">Side profile showing machine dimensions</div>
+                </div>
+                
+                <div class="image-input-group">
+                    <label for="image_working">Working View</label>
+                    <input type="url" id="image_working" name="image_working" 
+                           placeholder="https://example.com/working-view.jpg">
+                    <div class="help-text">Machine in operation or during production</div>
+                </div>
+                
+                <div class="image-input-group">
+                    <label for="image_closeup">Close-up/Detail View</label>
+                    <input type="url" id="image_closeup" name="image_closeup" 
+                           placeholder="https://example.com/closeup-view.jpg">
+                    <div class="help-text">Close-up of important features or controls</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Add Machine</button>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const imageInputs = [
+            document.getElementById('image_front'),
+            document.getElementById('image_side'),
+            document.getElementById('image_working'),
+            document.getElementById('image_closeup')
+        ];
+        
+        const hasImage = imageInputs.some(input => input.value.trim() !== '');
+        
+        if (!hasImage) {
+            e.preventDefault();
+            alert('Please add at least one machine image to continue.');
+            document.getElementById('image_front').focus();
+        }
+    });
+
+    // Auto-format price range
+    document.getElementById('price_range').addEventListener('blur', function() {
+        let value = this.value.trim();
+        if (value && !value.startsWith('₹')) {
+            this.value = '₹' + value;
+        }
+    });
+
+    // Dynamic category suggestions
+    document.getElementById('category').addEventListener('change', function() {
+        const useCaseInput = document.getElementById('use_case');
+        const category = this.value;
+        
+        const suggestions = {
+            'CNC Machines': 'Precision Metal Cutting and Drilling',
+            'Lathe Machines': 'Metal Turning and Shaping',
+            'Press Machines': 'Metal Forming and Stamping',
+            'Welding Machines': 'Metal Fabrication and Joining',
+            'Cutting Machines': 'Precision Metal Cutting'
+        };
+        
+        if (suggestions[category] && !useCaseInput.value) {
+            useCaseInput.value = suggestions[category];
+        }
+    });
+</script>
+{% endblock %}

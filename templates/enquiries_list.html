@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Enquiries - B2B Manufacturing Platform{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Machine Enquiries</h1>
+        <p>View all enquiries for your machines</p>
+    </div>
+    
+    {% if enquiries %}
+        <div class="enquiries-filters">
+            <div class="filter-stats">
+                <span>Total: {{ enquiries|length }} enquiries</span>
+                <span>Pending: {{ enquiries|selectattr('status', 'equalto', 'pending')|list|length }}</span>
+                <span>Responded: {{ enquiries|selectattr('status', 'equalto', 'responded')|list|length }}</span>
+            </div>
+        </div>
+        
+        <div class="enquiries-list">
+            {% for enquiry in enquiries %}
+            <div class="enquiry-card">
+                <div class="enquiry-header">
+                    <div class="enquiry-title">
+                        <h3>{{ enquiry.machine.name }}</h3>
+                        <span class="enquiry-status status-{{ enquiry.status }}">{{ enquiry.status }}</span>
+                    </div>
+                    <div class="enquiry-date">
+                        {{ enquiry.created_at.strftime('%B %d, %Y') }}
+                    </div>
+                </div>
+                
+                <div class="enquiry-content">
+                    <div class="enquiry-buyer">
+                        <h4>Buyer Information</h4>
+                        <p><strong>Name:</strong> {{ enquiry.buyer.name }}</p>
+                        <p><strong>Email:</strong> {{ enquiry.buyer.email }}</p>
+                        <p><strong>Budget:</strong> {{ enquiry.budget }}</p>
+                        <p><strong>Location:</strong> {{ enquiry.location }}</p>
+                    </div>
+                    
+                    <div class="enquiry-message">
+                        <h4>Message</h4>
+                        <p>{{ enquiry.message }}</p>
+                    </div>
+                    
+                    <div class="enquiry-production">
+                        <h4>Production Requirements</h4>
+                        <p>{{ enquiry.production_need }}</p>
+                    </div>
+                    
+                    <div class="enquiry-machine">
+                        <h4>Machine Details</h4>
+                        <p><strong>Category:</strong> {{ enquiry.machine.category }}</p>
+                        <p><strong>Use Case:</strong> {{ enquiry.machine.use_case }}</p>
+                        <p><strong>Price Range:</strong> {{ enquiry.machine.price_range }}</p>
+                        <p><strong>Description:</strong> {{ enquiry.machine.description[:200] }}{% if enquiry.machine.description|length > 200 %}...{% endif %}</p>
+                    </div>
+                    
+                    <div class="enquiry-actions">
+                        <a href="mailto:{{ enquiry.buyer.email }}?subject=Regarding your enquiry for {{ enquiry.machine.name }}" class="btn btn-primary">Contact Buyer</a>
+                        <a href="{{ url_for('machine_detail', machine_id=enquiry.machine.id) }}" class="btn btn-outline">View Machine</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>No enquiries received</h3>
+            <p>When buyers send enquiries for your machines, they will appear here.</p>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Supplier Dashboard - B2B Manufacturing Platform{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="dashboard-header">
+        <h1>Supplier Dashboard</h1>
+        <p>Welcome back, {{ user.name }}!</p>
+    </div>
+    
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <h3>{{ machines|length }}</h3>
+            <p>Your Machines</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ enquiries|length }}</h3>
+            <p>Total Enquiries</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ enquiries|selectattr('status', 'equalto', 'pending')|list|length }}</h3>
+            <p>Pending Enquiries</p>
+        </div>
+    </div>
+    
+    <div class="dashboard-content">
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2>Your Machines</h2>
+                <a href="{{ url_for('add_machine') }}" class="btn btn-primary">Add New Machine</a>
+            </div>
+            
+            {% if machines %}
+                <div class="machines-grid">
+                    {% for machine in machines %}
+                    <div class="machine-card">
+                        <div class="machine-image">
+                            <img src="{{ machine.image_url or 'https://via.placeholder.com/300x200?text=Machine' }}" alt="{{ machine.name }}">
+                        </div>
+                        <div class="machine-info">
+                            <h3>{{ machine.name }}</h3>
+                            <p class="machine-category">{{ machine.category }}</p>
+                            <p class="machine-price">{{ machine.price_range }}</p>
+                            <p class="machine-description">{{ machine.description[:100] }}{% if machine.description|length > 100 %}...{% endif %}</p>
+                            <div class="machine-actions">
+                                <a href="{{ url_for('machine_detail', machine_id=machine.id) }}" class="btn btn-outline">View</a>
+                                <span class="enquiry-count">{{ machine.enquiries|length }} enquiries</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>No machines listed yet</h3>
+                    <p>Start by adding your first machine to attract potential buyers.</p>
+                    <a href="{{ url_for('add_machine') }}" class="btn btn-primary">Add Your First Machine</a>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2>Recent Enquiries</h2>
+                <a href="{{ url_for('view_enquiries') }}" class="btn btn-outline">View All</a>
+            </div>
+            
+            {% if enquiries %}
+                <div class="enquiries-list">
+                    {% for enquiry in enquiries %}
+                    <div class="enquiry-card">
+                        <div class="enquiry-header">
+                            <h4>{{ enquiry.machine.name }}</h4>
+                            <span class="enquiry-status status-{{ enquiry.status }}">{{ enquiry.status }}</span>
+                        </div>
+                        <div class="enquiry-details">
+                            <p><strong>From:</strong> {{ enquiry.buyer.name }} ({{ enquiry.buyer.email }})</p>
+                            <p><strong>Budget:</strong> {{ enquiry.budget }}</p>
+                            <p><strong>Location:</strong> {{ enquiry.location }}</p>
+                            <p><strong>Date:</strong> {{ enquiry.created_at.strftime('%B %d, %Y') }}</p>
+                            <div class="enquiry-message">
+                                <strong>Message:</strong>
+                                <p>{{ enquiry.message }}</p>
+                            </div>
+                            <div class="enquiry-production">
+                                <strong>Production Need:</strong>
+                                <p>{{ enquiry.production_need }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>No enquiries yet</h3>
+                    <p>Enquiries from interested buyers will appear here.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

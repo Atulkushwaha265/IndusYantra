@@ -1,0 +1,1006 @@
+{% extends "base.html" %}
+
+{% block title %}{{ machine.name }} - B2B Manufacturing Platform{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="machine-detail">
+        <!-- Back Navigation -->
+        <div class="machine-detail-header">
+            <a href="{{ url_for('machines_list') }}" class="back-link">← Back to Machines</a>
+        </div>
+        
+        <!-- Hero Section -->
+        <section class="machine-hero">
+            <div class="hero-gallery">
+                <div class="main-image">
+                    <img src="{{ machine.image_url or 'https://via.placeholder.com/600x400?text=Machine' }}" alt="{{ machine.name }}" id="mainMachineImage">
+                </div>
+                <div class="thumbnail-gallery">
+                    {% if machine.image_front %}
+                    <img src="{{ machine.image_front }}" alt="Front view" class="thumbnail active" onclick="changeMainImage(this)">
+                    {% endif %}
+                    {% if machine.image_side %}
+                    <img src="{{ machine.image_side }}" alt="Side view" class="thumbnail" onclick="changeMainImage(this)">
+                    {% endif %}
+                    {% if machine.image_working %}
+                    <img src="{{ machine.image_working }}" alt="Working view" class="thumbnail" onclick="changeMainImage(this)">
+                    {% endif %}
+                    {% if machine.image_closeup %}
+                    <img src="{{ machine.image_closeup }}" alt="Close-up view" class="thumbnail" onclick="changeMainImage(this)">
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="hero-info">
+                <div class="machine-header">
+                    <h1>{{ machine.name }}</h1>
+                    <div class="machine-badges">
+                        <span class="category-badge">{{ machine.category }}</span>
+                        <span class="price-badge">{{ machine.price_range }}</span>
+                    </div>
+                </div>
+                
+                <div class="industry-tags">
+                    <span class="tag">Best For: {{ machine.use_case }}</span>
+                </div>
+                
+                <div class="quick-info-grid">
+                    <div class="quick-info-item">
+                        <strong>Production Capacity</strong>
+                        <span>{{ machine.production_capacity or '500-1000 units/day' }}</span>
+                    </div>
+                    <div class="quick-info-item">
+                        <strong>Automation Level</strong>
+                        <span>{{ machine.automation_level or 'Semi-Automatic' }}</span>
+                    </div>
+                    <div class="quick-info-item">
+                        <strong>Power Requirement</strong>
+                        <span>{{ machine.power_requirement or '440V, 3 Phase' }}</span>
+                    </div>
+                    <div class="quick-info-item">
+                        <strong>Location</strong>
+                        <span>{{ supplier.name }}, Pune</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="machine-content-grid">
+            <!-- Main Content Area -->
+            <div class="main-content">
+                <!-- Specifications Table -->
+                <section class="specifications-section">
+                    <h2>Technical Specifications</h2>
+                    <div class="spec-table">
+                        <div class="spec-row">
+                            <div class="spec-label">Machine Type</div>
+                            <div class="spec-value">{{ machine.category }}</div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-label">Production Output</div>
+                            <div class="spec-value">{{ machine.production_capacity or '500-1000 units per 8-hour shift' }}</div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-label">Power Consumption</div>
+                            <div class="spec-value">{{ machine.power_requirement or '15 kW per hour' }}</div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-label">Machine Dimensions</div>
+                            <div class="spec-value">{{ machine.machine_dimensions or '12ft × 8ft × 6ft (L×W×H)' }}</div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-label">Raw Material Supported</div>
+                            <div class="spec-value">{{ machine.raw_material or 'Mild Steel, Stainless Steel, Aluminum' }}</div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-label">Operator Skill Level</div>
+                            <div class="spec-value">{{ machine.operator_skill or 'Semi-skilled technician required' }}</div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-label">Warranty Information</div>
+                            <div class="spec-value">{{ machine.warranty_info or '1 year manufacturer warranty + service support' }}</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Use Case & Industry Fit -->
+                <section class="use-case-section">
+                    <h2>Industry Fit & Use Cases</h2>
+                    <div class="use-case-grid">
+                        <div class="use-case-card">
+                            <h3>Suitable Industries</h3>
+                            <div class="industry-tags">
+                                {% if machine.category == 'CNC Machines' %}
+                                    <span class="industry-tag">Automotive Components</span>
+                                    <span class="industry-tag">Aerospace</span>
+                                    <span class="industry-tag">General Engineering</span>
+                                {% elif machine.category == 'Lathe Machines' %}
+                                    <span class="industry-tag">Metal Fabrication</span>
+                                    <span class="industry-tag">Automotive Parts</span>
+                                    <span class="industry-tag">General Engineering</span>
+                                {% elif machine.category == 'Press Machines' %}
+                                    <span class="industry-tag">Metal Stamping</span>
+                                    <span class="industry-tag">Automotive</span>
+                                    <span class="industry-tag">Appliances</span>
+                                {% elif machine.category == 'Welding Machines' %}
+                                    <span class="industry-tag">Metal Fabrication</span>
+                                    <span class="industry-tag">Construction</span>
+                                    <span class="industry-tag">Shipbuilding</span>
+                                {% elif machine.category == 'Cutting Machines' %}
+                                    <span class="industry-tag">Sheet Metal</span>
+                                    <span class="industry-tag">Signage</span>
+                                    <span class="industry-tag">Electronics</span>
+                                {% else %}
+                                    <span class="industry-tag">General Manufacturing</span>
+                                    <span class="industry-tag">Small Scale Production</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="use-case-card">
+                            <h3>Ideal Business Size</h3>
+                            <div class="business-size-info">
+                                <div class="size-badge ideal">Small MSME (10-50 employees)</div>
+                                <div class="size-badge ideal">Medium Unit (50-200 employees)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="use-case-card warning">
+                            <h3>Not Recommended For</h3>
+                            {% if machine.automation_level == 'Manual' %}
+                                <p>High-volume production (>500 units/day) - Consider semi-automatic or fully automatic alternatives</p>
+                            {% elif machine.automation_level == 'Semi-Automatic' %}
+                                <p>Large-scale mass production (>10,000 units/day) - Consider fully automated alternatives</p>
+                            {% elif machine.category == 'CNC Machines' %}
+                                <p>Simple cutting operations - Consider manual cutting tools for cost efficiency</p>
+                            {% elif machine.category == 'Lathe Machines' %}
+                                <p>High-precision micro-machining - Requires specialized CNC lathe equipment</p>
+                            {% else %}
+                                <p>Operations requiring specialized tooling not mentioned in specifications</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Image Gallery -->
+                <section class="gallery-section">
+                    <h2>Machine Gallery</h2>
+                    <div class="gallery-grid">
+                        {% if machine.image_front %}
+                        <div class="gallery-item" onclick="openGalleryModal(this)">
+                            <img src="{{ machine.image_front }}" alt="{{ machine.name }} - Front View">
+                            <div class="gallery-caption">Front View</div>
+                        </div>
+                        {% endif %}
+                        {% if machine.image_side %}
+                        <div class="gallery-item" onclick="openGalleryModal(this)">
+                            <img src="{{ machine.image_side }}" alt="{{ machine.name }} - Side View">
+                            <div class="gallery-caption">Side View</div>
+                        </div>
+                        {% endif %}
+                        {% if machine.image_working %}
+                        <div class="gallery-item" onclick="openGalleryModal(this)">
+                            <img src="{{ machine.image_working }}" alt="{{ machine.name }} - Working View">
+                            <div class="gallery-caption">Working View</div>
+                        </div>
+                        {% endif %}
+                        {% if machine.image_closeup %}
+                        <div class="gallery-item" onclick="openGalleryModal(this)">
+                            <img src="{{ machine.image_closeup }}" alt="{{ machine.name }} - Close-up View">
+                            <div class="gallery-caption">Close-up View</div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if not machine.image_front and not machine.image_side and not machine.image_working and not machine.image_closeup %}
+                        <div class="gallery-item" onclick="openGalleryModal(this)">
+                            <img src="https://via.placeholder.com/300x200?text=No+Images" alt="No Images Available">
+                            <div class="gallery-caption">No Images Available</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <!-- Experience Notes -->
+                <section class="experience-section">
+                    <h2>Experience & Suitability</h2>
+                    <div class="experience-badges">
+                        <div class="experience-badge positive">
+                            <span class="badge-icon">✔</span>
+                            <span class="badge-text">
+                                {% if machine.category == 'CNC Machines' %}Precision manufacturing{% else %}Quality production{% endif %}
+                            </span>
+                        </div>
+                        <div class="experience-badge positive">
+                            <span class="badge-icon">✔</span>
+                            <span class="badge-text">
+                                {% if machine.automation_level == 'Fully Automatic' %}High volume capability{% else %}Medium production volumes{% endif %}
+                            </span>
+                        </div>
+                        <div class="experience-badge {% if machine.operator_skill == 'Skilled operator required' %}warning{% else %}positive{% endif %}">
+                            <span class="badge-icon">{% if machine.operator_skill == 'Skilled operator required' %}⚠{% else %}✔{% endif %}</span>
+                            <span class="badge-text">
+                                {{ machine.operator_skill or 'Basic operation knowledge required' }}
+                            </span>
+                        </div>
+                        <div class="experience-badge positive">
+                            <span class="badge-icon">✔</span>
+                            <span class="badge-text">
+                                {% if machine.warranty_info and 'year' in machine.warranty_info %}{{ machine.warranty_info.split()[0] }} support{% else %}Standard manufacturer support{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Detailed Description -->
+                <section class="description-section">
+                    <h2>Detailed Description</h2>
+                    <div class="description-content">
+                        <p>{{ machine.description }}</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Supplier Credibility Box -->
+                <div class="supplier-card">
+                    <div class="supplier-header">
+                        <h3>Supplier Information</h3>
+                        <span class="verified-badge">✓ Verified Supplier</span>
+                    </div>
+                    <div class="supplier-details">
+                        <div class="supplier-name">{{ supplier.name }}</div>
+                        <div class="supplier-location">
+                            <span>📍 {{ supplier.name }}, Maharashtra</span>
+                        </div>
+                        <div class="supplier-stats">
+                            <div class="stat-item">
+                                <strong>{{ supplier_machines_count }}</strong>
+                                <span>Machines Listed</span>
+                            </div>
+                            <div class="stat-item">
+                                <strong>8+ Years</strong>
+                                <span>Experience</span>
+                            </div>
+                            <div class="stat-item">
+                                <strong>50+</strong>
+                                <span>Happy Clients</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enquiry Section -->
+                <div class="enquiry-card">
+                    <h3>Send Enquiry</h3>
+                    {% if session.user_id and session.user_role == 'buyer' %}
+                        <form method="POST" action="{{ url_for('create_enquiry', machine_id=machine.id) }}" class="enquiry-form">
+                            <div class="form-group">
+                                <label for="message">Your Message *</label>
+                                <textarea id="message" name="message" required placeholder="Introduce yourself and describe your interest..."></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="budget">Budget Range *</label>
+                                <select id="budget" name="budget" required>
+                                    <option value="">Select budget range</option>
+                                    <option value="₹5,00,000 - ₹10,00,000">₹5,00,000 - ₹10,00,000</option>
+                                    <option value="₹10,00,000 - ₹15,00,000">₹10,00,000 - ₹15,00,000</option>
+                                    <option value="₹15,00,000 - ₹25,00,000">₹15,00,000 - ₹25,00,000</option>
+                                    <option value="₹25,00,000+">₹25,00,000+</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="location">City/Location *</label>
+                                <input type="text" id="location" name="location" required placeholder="Your city/state">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="production_need">Production Need *</label>
+                                <textarea id="production_need" name="production_need" required placeholder="Describe your production requirements..."></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="timeline">Timeline</label>
+                                <select id="timeline" name="timeline">
+                                    <option value="urgent">Urgent (Within 1 month)</option>
+                                    <option value="planning">Planning (2-6 months)</option>
+                                    <option value="exploring">Just Exploring</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-full">Send Enquiry</button>
+                        </form>
+                    {% elif not session.user_id %}
+                        <div class="login-prompt">
+                            <p>Please login to send an enquiry</p>
+                            <a href="{{ url_for('login') }}" class="btn btn-primary btn-full">Login to Enquire</a>
+                        </div>
+                    {% else %}
+                        <div class="role-prompt">
+                            <p>Enquiries can only be sent by buyers</p>
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline btn-full">Go to Dashboard</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gallery Modal -->
+<div id="galleryModal" class="modal" onclick="closeGalleryModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="close" onclick="closeGalleryModal()">&times;</span>
+        <img id="modalImage" src="" alt="">
+        <div id="modalCaption"></div>
+    </div>
+</div>
+
+<script>
+function changeMainImage(thumbnail) {
+    const mainImage = document.getElementById('mainMachineImage');
+    mainImage.src = thumbnail.src.replace('150x100', '600x400');
+    
+    // Update active thumbnail
+    document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
+    thumbnail.classList.add('active');
+}
+
+function openGalleryModal(galleryItem) {
+    const modal = document.getElementById('galleryModal');
+    const modalImg = document.getElementById('modalImage');
+    const modalCaption = document.getElementById('modalCaption');
+    const img = galleryItem.querySelector('img');
+    const caption = galleryItem.querySelector('.gallery-caption');
+    
+    modal.style.display = 'block';
+    modalImg.src = img.src;
+    modalCaption.textContent = caption.textContent;
+}
+
+function closeGalleryModal() {
+    document.getElementById('galleryModal').style.display = 'none';
+}
+</script>
+
+<style>
+/* Machine Detail Page Styles */
+.machine-detail {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.machine-detail-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.back-link {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* Hero Section */
+.machine-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    padding: 2rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.hero-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.main-image img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.thumbnail-gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+}
+
+.thumbnail {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.thumbnail:hover {
+    border-color: #3498db;
+}
+
+.thumbnail.active {
+    border-color: #3498db;
+    opacity: 1;
+}
+
+.hero-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.machine-header h1 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.machine-badges {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.category-badge {
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.price-badge {
+    background: #e8f5e8;
+    color: #27ae60;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.industry-tags .tag {
+    background: #f8f9fa;
+    color: #495057;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    border: 1px solid #dee2e6;
+}
+
+.quick-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.quick-info-item {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.quick-info-item strong {
+    display: block;
+    color: #495057;
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+}
+
+.quick-info-item span {
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+/* Content Grid */
+.machine-content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    padding: 2rem;
+}
+
+/* Specifications Table */
+.specifications-section {
+    margin-bottom: 2rem;
+}
+
+.specifications-section h2 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.spec-table {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.spec-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.spec-row:last-child {
+    border-bottom: none;
+}
+
+.spec-label {
+    padding: 1rem;
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+    border-right: 1px solid #e9ecef;
+}
+
+.spec-value {
+    padding: 1rem;
+    color: #2c3e50;
+}
+
+/* Use Case Section */
+.use-case-section {
+    margin-bottom: 2rem;
+}
+
+.use-case-section h2 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.use-case-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.use-case-card {
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.use-case-card.warning {
+    background: #fff3cd;
+    border-color: #ffeaa7;
+}
+
+.use-case-card h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.industry-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.industry-tag {
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 0.4rem 0.8rem;
+    border-radius: 16px;
+    font-size: 0.85rem;
+}
+
+.business-size-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.size-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.size-badge.ideal {
+    background: #e8f5e8;
+    color: #27ae60;
+}
+
+/* Gallery Section */
+.gallery-section {
+    margin-bottom: 2rem;
+}
+
+.gallery-section h2 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.gallery-item {
+    position: relative;
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.gallery-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+}
+
+.modal-content {
+    position: relative;
+    margin: 5% auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 800px;
+}
+
+.modal-content img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+#modalCaption {
+    color: white;
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 1.1rem;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    color: white;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #bbb;
+}
+
+/* Experience Section */
+.experience-section {
+    margin-bottom: 2rem;
+}
+
+.experience-section h2 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.experience-badges {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.experience-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.experience-badge.positive {
+    background: #e8f5e8;
+    border-color: #c3e6cb;
+}
+
+.experience-badge.warning {
+    background: #fff3cd;
+    border-color: #ffeaa7;
+}
+
+.badge-icon {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.badge-text {
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+/* Description Section */
+.description-section {
+    margin-bottom: 2rem;
+}
+
+.description-section h2 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.description-content {
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.description-content p {
+    color: #495057;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Sidebar */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Supplier Card */
+.supplier-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    border: 1px solid #e9ecef;
+}
+
+.supplier-header {
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.supplier-header h3 {
+    color: #2c3e50;
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.verified-badge {
+    background: #e8f5e8;
+    color: #27ae60;
+    padding: 0.4rem 0.8rem;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.supplier-details {
+    padding: 1.5rem;
+}
+
+.supplier-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.supplier-location {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.supplier-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    text-align: center;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stat-item strong {
+    color: #3498db;
+    font-size: 1.2rem;
+}
+
+.stat-item span {
+    color: #7f8c8d;
+    font-size: 0.8rem;
+}
+
+/* Enquiry Card */
+.enquiry-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    border: 1px solid #e9ecef;
+}
+
+.enquiry-card h3 {
+    padding: 1.5rem;
+    margin: 0;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    color: #2c3e50;
+    font-size: 1.2rem;
+}
+
+.enquiry-form {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.enquiry-form .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #495057;
+}
+
+.enquiry-form .form-group input,
+.enquiry-form .form-group select,
+.enquiry-form .form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.enquiry-form .form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.login-prompt,
+.role-prompt {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.login-prompt p,
+.role-prompt p {
+    color: #7f8c8d;
+    margin-bottom: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .machine-content-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .machine-hero {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .quick-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .spec-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .spec-label {
+        border-right: none;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .supplier-stats {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .stat-item {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+    }
+    
+    .thumbnail-gallery {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .machine-detail-header,
+    .machine-hero,
+    .machine-content-grid {
+        padding: 1rem;
+    }
+    
+    .machine-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .machine-badges {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .use-case-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .experience-badges {
+        grid-template-columns: 1fr;
+    }
+    
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

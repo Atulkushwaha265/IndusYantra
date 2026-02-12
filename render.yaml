@@ -1,0 +1,38 @@
+services:
+  # PostgreSQL Database Service
+  - type: postgres
+    name: b2b-database
+    plan: free
+    ipAllowList: []  # Allow all connections (you can restrict this in production)
+    
+  # Web Service for Flask Application
+  - type: web
+    name: b2b-platform
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: b2b-database
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.9.16
+    
+    # Auto-deploy configuration
+    repo: https://github.com/your-username/b2b-platform.git
+    rootDir: .
+    healthCheckPath: /
+    
+    # Scaling configuration
+    autoDeploy: true
+    numInstances: 1
+    
+    # Disk space
+    disk:
+      name: b2b-disk
+      mountPath: /opt/render/project
+      sizeGB: 1

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Send Enquiry - B2B Manufacturing Platform{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-section">
+        <div class="form-header">
+            <h1>Send Enquiry</h1>
+            <p>Contact the supplier about this machine</p>
+        </div>
+        
+        <div class="enquiry-machine-summary">
+            <div class="machine-summary">
+                <img src="{{ machine.image_url or 'https://via.placeholder.com/100x80?text=Machine' }}" alt="{{ machine.name }}">
+                <div class="machine-summary-info">
+                    <h3>{{ machine.name }}</h3>
+                    <p class="machine-category">{{ machine.category }}</p>
+                    <p class="machine-price">{{ machine.price_range }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <form method="POST" action="{{ url_for('create_enquiry', machine_id=machine.id) }}" class="enquiry-form">
+            <div class="form-group">
+                <label for="message">Message *</label>
+                <textarea id="message" name="message" required class="form-control" rows="4" placeholder="Introduce yourself and describe your interest in this machine..."></textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="budget">Budget *</label>
+                    <input type="text" id="budget" name="budget" required class="form-control" placeholder="e.g., ₹8,00,000">
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">Location *</label>
+                    <input type="text" id="location" name="location" required class="form-control" placeholder="e.g., Mumbai, Maharashtra">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="production_need">Production Need *</label>
+                <textarea id="production_need" name="production_need" required class="form-control" rows="3" placeholder="Describe your production requirements, expected usage, timeline, etc."></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Send Enquiry</button>
+                <a href="{{ url_for('machine_detail', machine_id=machine.id) }}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

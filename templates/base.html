@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}B2B Manufacturing Platform{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Professional Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <!-- Logo and Brand -->
+                <div class="nav-brand">
+                    <a href="{{ url_for('home') }}" class="brand-link">
+                        {% if url_for('static', filename='images/logo.png') %}
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="IndusYantra" class="brand-logo">
+                        {% else %}
+                        <div class="brand-text">
+                            <span class="brand-icon">🏭</span>
+                            <span class="brand-name">B2B Manufacturing</span>
+                        </div>
+                        {% endif %}
+                    </a>
+                </div>
+                
+                <!-- Navigation Menu -->
+                <div class="nav-menu">
+                    <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+                    <a href="{{ url_for('machines_list') }}" class="nav-link">Machines</a>
+                    
+                    {% if session.user_id and session.user_role == 'supplier' %}
+                    {% endif %}
+                    
+                    {% if session.user_id %}
+                    <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+                    
+                    <!-- User Profile Dropdown -->
+                    <div class="nav-dropdown">
+                        <button class="nav-dropdown-btn">
+                            {% if session.user_profile_image %}
+                            <img src="{{ url_for('static', filename=session.user_profile_image) }}" alt="Profile" class="user-avatar-img">
+                            {% else %}
+                            <span class="user-avatar">{{ session.user_name[0].upper() if session.user_name else 'U' }}</span>
+                            {% endif %}
+                            <span class="user-name">{{ session.user_name or 'User' }}</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="{{ url_for('profile') }}" class="dropdown-item">
+                                <span class="dropdown-icon">👤</span> My Profile
+                            </a>
+                            <a href="{{ url_for('dashboard') }}" class="dropdown-item">
+                                <span class="dropdown-icon">�</span> Dashboard
+                            </a>
+                            {% if session.user_role == 'supplier' %}
+                            <a href="{{ url_for('add_machine') }}" class="dropdown-item">
+                                <span class="dropdown-icon">➕</span> Add Machine
+                            </a>
+                            {% endif %}
+                            <a href="{{ url_for('logout') }}" class="dropdown-item logout">
+                                <span class="dropdown-icon">🚪</span> Logout
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+                    <a href="{{ url_for('register') }}" class="nav-link nav-cta">Register</a>
+                    {% endif %}
+                </div>
+                
+                <!-- Mobile Menu Toggle -->
+                <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Page Content -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Professional Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-column">
+                    <div class="footer-brand">
+                        <div class="footer-brand-text">
+                            <span class="footer-brand-icon">🏭</span>
+                            <span class="footer-brand-name"> IndusYantra Manufacturing</span>
+                        </div>
+                        <p class="footer-description">
+                            Helping MSMEs discover the right industrial machines for their manufacturing needs. 
+                            Connect with trusted suppliers across India.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Quick Links Column -->
+                <div class="footer-column">
+                    <h3 class="footer-title">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('home') }}">Home</a></li>
+                        <li><a href="{{ url_for('machines_list') }}">Browse Machines</a></li>
+                        <li><a href="{{ url_for('register') }}">Become a Supplier</a></li>
+                        <li><a href="{{ url_for('login') }}">Login</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Industries Column -->
+                <div class="footer-column">
+                    <h3 class="footer-title">Industries</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('machines_list') }}?category=CNC Machines">CNC Machines</a></li>
+                        <li><a href="{{ url_for('machines_list') }}?category=Lathe Machines">Lathe Machines</a></li>
+                        <li><a href="{{ url_for('machines_list') }}?category=Press Machines">Press Machines</a></li>
+                        <li><a href="{{ url_for('machines_list') }}?category=Welding Machines">Welding Machines</a></li>
+                        <li><a href="{{ url_for('machines_list') }}?category=Cutting Machines">Cutting Machines</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Column -->
+                <div class="footer-column">
+                    <h3 class="footer-title">Contact Info</h3>
+                    <div class="footer-contact">
+                        <div class="contact-item">
+                            <span class="contact-icon">📧</span>
+                            <span>IndusYantra@manufacturing.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">📞</span>
+                            <span>+91 98765 43210</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">📍</span>
+                            <span>Serving Across India</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom Copyright Bar -->
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <p>&copy; 2026 B2B Manufacturing Platform — All Rights Reserved</p>
+                    <div class="footer-bottom-links">
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const navMenu = document.querySelector('.nav-menu');
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            
+            navMenu.classList.toggle('mobile-active');
+            mobileToggle.classList.toggle('active');
+        }
+        
+        // Dropdown Menu Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownBtn = document.querySelector('.nav-dropdown-btn');
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+            
+            if (dropdownBtn) {
+                dropdownBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    dropdownMenu.classList.toggle('active');
+                });
+            }
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function() {
+                if (dropdownMenu) {
+                    dropdownMenu.classList.remove('active');
+                }
+            });
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

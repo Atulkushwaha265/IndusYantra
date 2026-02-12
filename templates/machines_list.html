@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Machines - B2B Manufacturing Platform{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Browse Machines</h1>
+        <p>Find the perfect equipment for your manufacturing needs</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="machines-page">
+        <div class="filters-sidebar">
+            <h3>Filters</h3>
+            
+            <form method="GET" action="{{ url_for('machines_list') }}" class="filter-form">
+                <div class="form-group">
+                    <label for="search">Search</label>
+                    <input type="text" id="search" name="search" value="{{ search_query }}" placeholder="Search machines..." class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category" class="form-control">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">Apply Filters</button>
+                <a href="{{ url_for('machines_list') }}" class="btn btn-outline btn-full">Clear Filters</a>
+            </form>
+        </div>
+        
+        <div class="machines-content">
+            {% if machines %}
+                <p class="results-count">Found {{ machines|length }} machines</p>
+                
+                <div class="machines-grid">
+                    {% for machine in machines %}
+                    <div class="machine-card">
+                        <div class="machine-image">
+                            <img src="{{ machine.image_url or 'https://via.placeholder.com/300x200?text=Machine' }}" alt="{{ machine.name }}">
+                        </div>
+                        <div class="machine-info">
+                            <h3>{{ machine.name }}</h3>
+                            <p class="machine-category">{{ machine.category }}</p>
+                            <p class="machine-use-case">{{ machine.use_case }}</p>
+                            <p class="machine-price">{{ machine.price_range }}</p>
+                            <p class="machine-description">{{ machine.description[:120] }}{% if machine.description|length > 120 %}...{% endif %}</p>
+                            
+                            <div class="machine-actions">
+                                <a href="{{ url_for('machine_detail', machine_id=machine.id) }}" class="btn btn-outline">View Details</a>
+                                {% if session.user_id and session.user_role == 'buyer' %}
+                                    <a href="{{ url_for('create_enquiry', machine_id=machine.id) }}" class="btn btn-primary">Send Enquiry</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-results">
+                    <h3>No machines found</h3>
+                    <p>Try adjusting your filters or search terms.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

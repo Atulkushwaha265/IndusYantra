@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Home - B2B Manufacturing Platform{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1>India’s Trusted Platform for Industrial Machinery Sourcing</h1>
+        <p>Compare machines, connect with reliable suppliers, and streamline your manufacturing growth.</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('machines_list') }}" class="btn btn-primary">Browse Machines</a>
+            {% if not session.user_id %}
+                <a href="{{ url_for('register') }}" class="btn btn-secondary">Join Now</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="features-section">
+    <div class="container">
+        <h2>Why Choose Our Platform?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>For MSME Buyers</h3>
+                <ul>
+                    <li>Browse verified machine suppliers</li>
+                    <li>Send enquiries directly to suppliers</li>
+                    <li>Find equipment within your budget</li>
+                    <li>Connect with trusted manufacturers</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h3>For Machine Suppliers</h3>
+                <ul>
+                    <li>List your machines for free</li>
+                    <li>Receive qualified buyer enquiries</li>
+                    <li>Expand your customer base</li>
+                    <li>Grow your business network</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Platform Benefits</h3>
+                <ul>
+                    <li>No transaction fees</li>
+                    <li>Simple enquiry system</li>
+                    <li>Direct buyer-supplier connection</li>
+                    <li>Secure and reliable</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if machines %}
+<div class="featured-section">
+    <div class="container">
+        <h2>Featured Machines</h2>
+        <div class="machines-grid">
+            {% for machine in machines %}
+            <div class="machine-card">
+                <div class="machine-image">
+                    <img src="{{ machine.image_url or 'https://via.placeholder.com/300x200?text=Machine' }}" alt="{{ machine.name }}">
+                </div>
+                <div class="machine-info">
+                    <h3>{{ machine.name }}</h3>
+                    <p class="machine-category">{{ machine.category }}</p>
+                    <p class="machine-price">{{ machine.price_range }}</p>
+                    <p class="machine-description">{{ machine.description[:100] }}{% if machine.description|length > 100 %}...{% endif %}</p>
+                    <a href="{{ url_for('machine_detail', machine_id=machine.id) }}" class="btn btn-outline">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center">
+            <a href="{{ url_for('machines_list') }}" class="btn btn-primary">View All Machines</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

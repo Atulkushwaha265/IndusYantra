@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - B2B Manufacturing Platform{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="dashboard-header">
+        <h1>Admin Dashboard</h1>
+        <p>Welcome back,{{ user.name }}!</p>
+    </div>
+    
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <h3>{{ total_users }}</h3>
+            <p>Total Users</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ total_machines }}</h3>
+            <p>Total Machines</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ total_enquiries }}</h3>
+            <p>Total Enquiries</p>
+        </div>
+    </div>
+    
+    <div class="dashboard-content">
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2>Recent Enquiries</h2>
+                <span class="section-count">{{ recent_enquiries|length }} recent</span>
+            </div>
+            
+            {% if recent_enquiries %}
+                <div class="enquiries-list">
+                    {% for enquiry in recent_enquiries %}
+                    <div class="enquiry-card">
+                        <div class="enquiry-header">
+                            <h4>{{ enquiry.machine.name }}</h4>
+                            <span class="enquiry-status status-{{ enquiry.status }}">{{ enquiry.status }}</span>
+                        </div>
+                        <div class="enquiry-details">
+                            <p><strong>Buyer:</strong> {{ enquiry.buyer.name }} ({{ enquiry.buyer.email }})</p>
+                            <p><strong>Supplier:</strong> {{ enquiry.machine.supplier.name }}</p>
+                            <p><strong>Machine Category:</strong> {{ enquiry.machine.category }}</p>
+                            <p><strong>Budget:</strong> {{ enquiry.budget }}</p>
+                            <p><strong>Location:</strong> {{ enquiry.location }}</p>
+                            <p><strong>Date:</strong> {{ enquiry.created_at.strftime('%B %d, %Y') }}</p>
+                            
+                            <div class="enquiry-message">
+                                <strong>Message:</strong>
+                                <p>{{ enquiry.message[:200] }}{% if enquiry.message|length > 200 %}...{% endif %}</p>
+                            </div>
+                            
+                            <div class="enquiry-actions">
+                                <a href="{{ url_for('machine_detail', machine_id=enquiry.machine.id) }}" class="btn btn-outline">View Machine</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>No enquiries yet</h3>
+                    <p>Enquiries will appear here once users start interacting.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2>Platform Overview</h2>
+            </div>
+            
+            <div class="overview-cards">
+                <div class="overview-card">
+                    <h3>Platform Statistics</h3>
+                    <ul>
+                        <li>Total Registered Users: {{ total_users }}</li>
+                        <li>Total Machines Listed: {{ total_machines }}</li>
+                        <li>Total Enquiries: {{ total_enquiries }}</li>
+                        <li>Platform Status: Active</li>
+                    </ul>
+                </div>
+                
+                <div class="overview-card">
+                    <h3>Quick Actions</h3>
+                    <div class="action-links">
+                        <a href="{{ url_for('machines_list') }}" class="btn btn-outline">View All Machines</a>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline">Refresh Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
